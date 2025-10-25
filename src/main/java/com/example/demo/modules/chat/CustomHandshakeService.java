@@ -1,7 +1,11 @@
-
-
-
 package com.example.demo.modules.chat;
+
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.socket.WebSocketHandler;
+import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService;
+import org.springframework.web.server.ServerWebExchange;
+
+import reactor.core.publisher.Mono;
 
 public class CustomHandshakeService extends HandshakeWebSocketService {
 
@@ -11,7 +15,7 @@ public class CustomHandshakeService extends HandshakeWebSocketService {
     if(user==null||user.isBlank()) {
       exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
       return exchange.getResponse().writeWith(
-        Mono.just(exchange.getResponse().bufferFactory().wrap(JsonUtil.message("userId is required.", StandardCharsets.UTF_8))
+        Mono.just(exchange.getResponse().bufferFactory().wrap("userId is required.".getBytes()))
       );
     }
 

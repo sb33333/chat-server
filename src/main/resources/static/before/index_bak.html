@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    index.html
+    <div id="messagingDiv">
+        <div id="messages"></div>
+        <input type="text" id="messageInput" disabled>
+        <button id="send">send</button>
+    </div>
+    <button id="session_check">session_check</button>
+    <button id="connect">connect</button>
+    <script src="./index.js" type="module"></script>
+    <template id="messageTemplate">
+        <p>
+            [<span data-timestamp></span>]
+            <span data-text></span>
+            <span data-sender></span>
+        </p>
+    </template>
+
+    <div>
+        <h3>file upload test</h3>
+        <div>
+            <input type="file" id="upload">
+            <button type="button" id="uploadSubmit">submit</button>
+
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>프로필 설정</title>
+	<link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+	<div class="container profile-setup">
+		<h2>프로필 설정</h2>
+		
+		<!-- 아이디 입력 -->
+		<input
+		type="text"
+		id="userId"
+		placeholder="사용자 ID를 입력하세요"
+		required
+		/>
+		
+		<!-- 프로필 이미지 업로드 -->
+		<div class="avatar-preview" id="avatarPreview">
+			<img src="default-avatar.png" alt="Avatar Preview" />
+		</div>
+		
+		<label for="avatarUpload">프로필 이미지 선택</label>
+		<input type="file" id="avatarUpload" accept="image/*" />
+		
+		<!-- 채팅방 입장 버튼 -->
+		<button class="enter-chat-btn" id="enterChatBtn">채팅방 입장</button>
+	</div>
+	
+	<script>
+		const fileInput = document.getElementById('avatarUpload');
+		const previewImg = document.querySelector('#avatarPreview img');
+		const enterBtn = document.getElementById('enterChatBtn');
+		
+		// 이미지 미리보기
+		fileInput.addEventListener('change', (e) => {
+			const file = e.target.files[0];
+			if (file) {
+				const reader = new FileReader();
+				reader.onload = (event) => {
+					previewImg.src = event.target.result;
+				};
+				reader.readAsDataURL(file);
+			}
+		});
+		
+		// 채팅방 입장 버튼 클릭
+		enterBtn.addEventListener('click', () => {
+			const userId = document.getElementById('userId').value.trim();
+			if (!userId) {
+				alert('사용자 ID를 입력해주세요.');
+				return;
+			}
+			
+			// 프로필 정보 저장 (로컬 저장소)
+			localStorage.setItem('chatUserId', userId);
+			localStorage.setItem('chatAvatar', previewImg.src);
+			
+			// 채팅 화면으로 이동
+			window.location.href = 'chat.html';
+		});
+	</script>
+</body>
+</html>

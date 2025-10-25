@@ -15,6 +15,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.example.demo.modules.chat.ChatHandler;
 import com.example.demo.modules.chat.ChatWebSocketHandler;
+import com.example.demo.modules.chat.CustomHandshakeService;
 import com.example.demo.modules.file.FileHandler;
 import com.example.demo.modules.manager.ManagerHandler;
 
@@ -40,7 +41,8 @@ public class RouterConfig {
     // }
     @Bean
     public WebSocketHandlerAdapter handerAdapter() {
-        return new WebSocketHandlerAdapter();
+        var customHandshakeService = new CustomHandshakeService() ;
+        return new WebSocketHandlerAdapter(customHandshakeService);
     }
 
     @Bean
@@ -91,8 +93,11 @@ public class RouterConfig {
         .route()
         .POST("/file", RequestPredicates.accept(MediaType.MULTIPART_FORM_DATA), fileHandler::upload)
         .GET("/file/{id}", fileHandler::download)
+        .POST("/file_b", RequestPredicates.accept(MediaType.MULTIPART_FORM_DATA), fileHandler::upload_blob)
+        .GET("/file_b", fileHandler::download_blob)
         .build()
         ;
     }
+
 
 }

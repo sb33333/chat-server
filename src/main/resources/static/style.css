@@ -1,0 +1,226 @@
+/* ============================= */
+/* 글로벌 변수 정의              */
+/* ============================= */
+:root {
+  --color-primary: #007aff;
+  --color-primary-dark: #005ecb;
+  --color-success: #34c759;
+  --color-success-dark: #28a745;
+  --color-bg-light: #f2f2f7;
+  --color-bg-chat: #fafafa;
+  --color-white: #ffffff;
+  --color-gray-light: #e5e5ea;
+  --color-text: #333333;
+  --color-text-muted: #777777;
+
+  --radius-large: 20px;
+  --radius-medium: 12px;
+  --radius-small: 6px;
+
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --transition-fast: 0.2s ease-in-out;
+}
+
+/* ============================= */
+/* 공통 레이아웃 및 기본 설정     */
+/* ============================= */
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--color-bg-light);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* 공통 카드형 컨테이너 */
+.container {
+  width: 95%;
+  max-width: 420px;
+  background-color: var(--color-white);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+/* 헤더 */
+.header {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  text-align: center;
+  padding: 14px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* 채팅 영역 */
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  background-color: var(--color-white);
+}
+
+/* 채팅 메시지 목록 */
+.chat-messages {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 개별 메시지 */
+.message {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.message.self {
+  align-self: flex-end;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-bottom-right-radius: var(--radius-small);
+}
+
+.message.other {
+  align-self: flex-start;
+  background-color: var(--color-gray-light);
+  color: #000;
+  border-bottom-left-radius: var(--radius-small);
+}
+
+/* 입력 영역 */
+.chat-input {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #ddd;
+  padding: 10px;
+  background-color: var(--color-bg-chat);
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.chat-input button {
+  margin-left: 8px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.chat-input button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* ============================= */
+/* 프로필 설정 화면 스타일        */
+/* ============================= */
+.profile-setup {
+  padding: 24px;
+  text-align: center;
+}
+
+.profile-setup h2 {
+  color: var(--color-text);
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+}
+
+/* 아이디 입력 */
+.profile-setup input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  outline: none;
+  margin-bottom: 20px;
+}
+
+/* 아바타 업로드 버튼 */
+.profile-setup input[type="file"] {
+  display: none;
+}
+
+.profile-setup label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  transition: background-color var(--transition-fast);
+}
+
+.profile-setup label:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* 이미지 미리보기 */
+.avatar-preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.avatar-preview img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-primary);
+}
+
+/* 채팅방 입장 버튼 */
+.enter-chat-btn {
+  width: 100%;
+  padding: 12px 0;
+  background-color: var(--color-success);
+  color: var(--color-white);
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.enter-chat-btn:hover {
+  background-color: var(--color-success-dark);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .chat-window {
+    height: 100%;
+  }
+}

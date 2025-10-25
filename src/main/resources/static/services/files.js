@@ -1,6 +1,8 @@
 "use strict";
 
-const submit = (inputElement, url) => {
+const FILE_URL = window.location.origin + "/file_b";
+
+const upload = (inputElement) => {
     const file = inputElement.files[0];
     if (!file) {
         console.error("file is not found");
@@ -10,13 +12,16 @@ const submit = (inputElement, url) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    fetch(url, {
+    return fetch(FILE_URL, {
         method: "POST",
         body: formData
     })
     .then(res => res.text())
-    .then(txt => console.log(txt))
     ;
 };
 
-export {submit};
+const download = (id) => {
+    
+};
+
+export {upload};

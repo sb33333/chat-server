@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>채팅방</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="container chat-window">
+    <div class="header">모바일 채팅방</div>
+
+    <!-- 메시지 목록 -->
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <!-- 입력창 -->
+    <div class="chat-input">
+      <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." />
+      <button id="sendBtn">➤</button>
+    </div>
+  </div>
+
+  <script>
+    const userId = localStorage.getItem('chatUserId');
+    const avatar = localStorage.getItem('chatAvatar');
+    const messagesContainer = document.getElementById('chatMessages');
+    const input = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    // 로그인 정보 없으면 프로필 설정으로 이동
+    if (!userId) {
+      // window.location.href = 'profile.html';
+    }
+
+    // 메시지 전송
+    const sendMessage = () => {
+      const text = input.value.trim();
+      if (!text) return;
+
+      appendMessage('self', text, avatar);
+      input.value = '';
+
+      // 가상 상대방 응답 (테스트용)
+      setTimeout(() => {
+        appendMessage('other', `${userId}님, '${text}'이라고 하셨죠? 😊`);
+      }, 800);
+    };
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    // 메시지 추가
+    function appendMessage(type, text, avatarUrl) {
+      const message = document.createElement('div');
+      message.classList.add('message', type);
+      message.textContent = text;
+      messagesContainer.appendChild(message);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  </script>
+</body>
+</html>
