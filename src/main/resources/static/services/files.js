@@ -16,7 +16,7 @@ const upload = (inputElement) => {
         method: "POST",
         body: formData
     })
-    .then(res => res.text())
+    .then(res => res.json())
     ;
 };
 

@@ -39,7 +39,7 @@ public class SessionManager {
     public void broadcast (String text, String sender) {
         var chatMessage = new ChatMessage();
         chatMessage.setSender(sender);
-        chatMessage.setMessage(text);
+        chatMessage.setText(text);
         this.broadcast(chatMessage);
     }
 

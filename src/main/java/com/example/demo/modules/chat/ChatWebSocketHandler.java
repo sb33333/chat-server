@@ -43,7 +43,10 @@ public class ChatWebSocketHandler implements WebSocketHandler{
     // 클라이언트로부터 들어온 메시지 처리
     private Mono<ChatMessage> processIncoming(String payload) {
         return Mono.fromCallable(() -> objectMapper.readValue(payload, ChatMessage.class))
-            .doOnNext(msg -> msg.setTimestamp(Instant.now()))
+            .doOnNext(msg -> {
+                msg.setTimestamp(Instant.now());
+                log.info("chatMessage:::{}", msg.toString());
+            })
             .onErrorResume(e -> {
                 log.info("invalid message ignored: {}", payload);
                 return Mono.empty();

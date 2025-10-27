@@ -1,6 +1,6 @@
 // views/chat.js
 import { connectChat, disconnectChat, addChatListener, removeChatListener, sendMessage } from '../services/chatSocket.js';
-
+import { getProfile } from '../services/profile.js';
 export function renderChat(container, navigateTo) {
   container.innerHTML = `
     <div class="chat-window">
@@ -16,26 +16,27 @@ export function renderChat(container, navigateTo) {
   const input = container.querySelector('#messageInput');
   const sendBtn = container.querySelector('#sendBtn');
 
-  const nickname = localStorage.getItem('nickname') || '익명';
+  // const nickname = localStorage.getItem('nickname') || '익명';
+  const nickname = getProfile().username || '익명';
   const avatar = localStorage.getItem('avatar') || '';
 
   // ===== 메시지 렌더링 =====
   function appendMessage(obj) {
     const el = document.createElement('div');
-    if (obj.type === 'system') {
+    if (obj.type === 'SYSTEM') {
       el.className = 'message other';
       el.textContent = `[시스템] ${obj.text}`;
       messagesDiv.appendChild(el);
       return;
     }
-    if (obj.type === 'message') {
+    if (obj.type === 'MESSAGE') {
       const wrapper = document.createElement('div');
-      const isSelf = obj.nickname === nickname;
+      const isSelf = obj.sender === nickname;
       wrapper.className = isSelf ? 'message self' : 'message other';
       wrapper.innerHTML = `
-        <strong>${obj.nickname}</strong><br/>
+        <strong>${obj.sender}</strong><br/>
         ${escapeHtml(obj.text)}<br/>
-        <small>${new Date(obj.time).toLocaleTimeString()}</small>
+        <small>${new Date(obj.timestamp).toLocaleTimeString()}</small>
       `;
       messagesDiv.appendChild(wrapper);
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -53,8 +54,9 @@ export function renderChat(container, navigateTo) {
 
   // ===== WebSocket 메시지 수신 리스너 등록 =====
   const listener = (data) => appendMessage(data);
+  removeChatListener(listener);
   addChatListener(listener);
-  connectChat(nickname, avatar);
+  // connectChat(nickname, avatar);
 
   // ===== 전송 버튼 및 Enter 처리 =====
   function handleSend() {
