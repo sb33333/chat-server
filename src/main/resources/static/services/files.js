@@ -2,26 +2,20 @@
 
 const FILE_URL = window.location.origin + "/file_b";
 
-const upload = (inputElement) => {
-    const file = inputElement.files[0];
-    if (!file) {
-        console.error("file is not found");
-        return;
-    }
+export const upload = async (file) => {
+    if (!file) throw new Error("file is not found");
 
     const formData = new FormData();
     formData.append("file", file);
 
-    return fetch(FILE_URL, {
+    const res = await fetch(FILE_URL, {
         method: "POST",
         body: formData
-    })
-    .then(res => res.json())
-    ;
+    });
+    return await res.json();
 };
 
-const download = (id) => {
-    
+export const download = async (id) => {
+    const res = await fetch(FILE_URL + "?id=" + id, {method: "GET"});
+    return await res.blob();
 };
-
-export {upload};

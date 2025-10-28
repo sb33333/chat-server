@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="imgDiv">
+
+    </div>
+    <input type="file" id="upload">
+    <script src="./util/module-loader.js"></script>
+    <script>
+        var uploadInput = document.getElementById("upload");
+        var imgDiv = document.getElementById("imgDiv");
+        ModuleLoader .add("/services/files.js", "Files");
+        ModuleLoader.onModuleImported(() => {
+            uploadInput.addEventListener("change", (event) => {
+                var {target} = event;
+                window["Files"]
+                    .upload(target.files[0])
+                    .then(jsonResponse => {
+                        console.log(jsonResponse.id);
+                        return jsonResponse.id;
+                    })
+                    .then(id => window["Files"].download(id))
+                    .then(blob => {
+                        var img = document.createElement("img");
+                        img.src = URL.createObjectURL(blob);
+                        imgDiv.append(img);
+                    });
+                    ;
+                
+            });
+        });
+
+    </script>
+</body>
+</html>

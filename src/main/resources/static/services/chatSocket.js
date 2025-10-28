@@ -1,5 +1,5 @@
 "use strict";
-import {setProfile, getProfile} from "./profile.js";
+import {getUsername, getProfileImageId} from "./userInfo.js";
 
 const WS_URL = 'ws://'+window.location.host+'/chat'; // 운영 시 wss://로 변경
 let socket = null;
@@ -19,7 +19,7 @@ export function removeChatListener(fn) {
 export function sendMessage(text) {
   if (!socket || socket.readyState !== WebSocket.OPEN) return;
   // socket.send(JSON.stringify({ type: 'message', text }));
-  socket.send(JSON.stringify({ type: "MESSAGE", text, sender: getProfile().username, imgId: getProfile().imgId }));
+  socket.send(JSON.stringify({ type: "MESSAGE", text, sender: getUsername(), imgId: getProfileImageId() }));
 }
 
 // ========== 연결 관리 ==========
@@ -30,8 +30,8 @@ export async function connectChat(nickname, avatar) {
   isOpened = (await fetch("/chat").then(res => res.text()).then(txt => txt.trim())) === "true";
 
   if (!isOpened) throw new Error("session is not opened.");
-  var profile = getProfile();
-  if (!profile?.username) throw new Error("username is required.");
+  
+  // if (!profile?.username) throw new Error("username is required.");
   socket = new WebSocket(WS_URL + "?user="+profile.username);
 
   socket.addEventListener('open', () => {

@@ -1,6 +1,21 @@
+/**
+ * socket 연결하기
+ * 채팅
+ * 
+ * join 메시지 보내면
+ * 서버에서는 system으로 전체 메시지 보내기
+ * 
+ * 채팅 메시지 보내면
+ * 서버에서는 broadcast
+ * 
+ * 새로고침 하면?
+ * ws 연결 끊김. -> 서버에서느,ㄴ system으로 전체 메시지 보내기.
+ * 로드되면 getUsername, getProfileImgId 사용해서 다시 ws 연결 시도
+ */
+
 // views/chat.js
 import { connectChat, disconnectChat, addChatListener, removeChatListener, sendMessage } from '../services/chatSocket.js';
-import { getProfile } from '../services/profile.js';
+import { getUsername } from '../services/userInfo.js';
 export function renderChat(container, navigateTo) {
   container.innerHTML = `
     <div class="chat-window">
@@ -17,7 +32,7 @@ export function renderChat(container, navigateTo) {
   const sendBtn = container.querySelector('#sendBtn');
 
   // const nickname = localStorage.getItem('nickname') || '익명';
-  const nickname = getProfile().username || '익명';
+  const nickname = getUsername() || '익명';
   const avatar = localStorage.getItem('avatar') || '';
 
   // ===== 메시지 렌더링 =====

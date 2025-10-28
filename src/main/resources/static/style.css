@@ -224,3 +224,20 @@ body {
     height: 100%;
   }
 }
+
+/* avatar-circle: 이미지 없는 상태의 기본 원형 스타일 */
+.avatar-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  transition: background 0.3s ease-in-out;
+  border: 2px solid var(--color-primary);
+}
+

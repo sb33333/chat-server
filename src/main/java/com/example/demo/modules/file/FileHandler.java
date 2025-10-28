@@ -61,7 +61,7 @@ public class FileHandler {
     
     
     public Mono<ServerResponse> download_blob (ServerRequest request) {
-        String id = request.pathVariable("id");
+        String id = request.queryParam("id").orElseThrow(() -> new IllegalArgumentException("file id is required."));
         return blobFileService.loadFile(id)
         .flatMap(fileDTO ->
         ServerResponse.ok()
