@@ -13,6 +13,7 @@ public class SessionManager {
 
     private ChatSession chatSession = null;
     public void openSession() {
+        if (chatSession != null) throw new IllegalStateException ("session already exists.");
         chatSession = new ChatSession();
         log.info("session created:::{}", chatSession.toString());
     }
