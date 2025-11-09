@@ -13,6 +13,7 @@ public class SessionManager {
 
     private ChatSession chatSession = null;
     public void openSession() {
+        if (chatSession != null) throw new IllegalStateException ("session already exists.");
         chatSession = new ChatSession();
         log.info("session created:::{}", chatSession.toString());
     }
@@ -24,14 +25,13 @@ public class SessionManager {
     }
 
     public boolean isOpen() {
-        return !(chatSession == null);
+        var isOpen = !(chatSession == null);
+        if (!isOpen) log.info("chatSession is not opened.");
+        return isOpen;
     }
 
     public void broadcast (ChatMessage msg) {
-        if (!isOpen()) {
-            log.error("chatSession is not opened");
-            return;
-        }
+        if (!isOpen()) return;
         msg.setTimestamp(Instant.now());
         chatSession.publish(msg);
     }
@@ -44,10 +44,7 @@ public class SessionManager {
     }
 
     public Flux<ChatMessage> getFlux () {
-        if (!isOpen()) {
-            log.error("chatSession is not opened");
-            return null;
-        }
+        if (!isOpen()) return null;
         return chatSession.getFlux();
     }
 
