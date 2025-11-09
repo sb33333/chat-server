@@ -4,7 +4,8 @@
  */
 
 import { upload } from "../services/files.js";
-import { setUsername, setProfileImageId } from "../services/userInfo.js";
+import { setUsername, setProfileImageId, setProfileGradient } from "../services/userInfo.js";
+import generateRandomGradient from "../util/gradient.js";
 
 // views/profile.js
 
@@ -32,12 +33,14 @@ export function renderProfile(container, navigateTo) {
   const enterBtn = div.querySelector('#enterChat');
   const avatarCircle = div.querySelector('#avatarCircle');
 
+  const gradient = generateRandomGradient();
+  avatarCircle.style.background = gradient;
+
   // ========== 1️⃣ nickname 입력 시 아바타에 반영 ==========
   nicknameInput.addEventListener('input', () => {
     const name = nicknameInput.value.trim();
     if (avatarCircle.dataset.hasImage !== 'true') {
       avatarCircle.textContent = name ? name[0].toUpperCase() : 'U';
-      avatarCircle.style.background = getRandomGradient();
     }
   });
 
@@ -47,7 +50,7 @@ export function renderProfile(container, navigateTo) {
     if (!file) {
       avatarCircle.dataset.hasImage = 'false';
       avatarCircle.textContent = nicknameInput.value.trim()[0] || 'U';
-      avatarCircle.style.background = getRandomGradient();
+      avatarCircle.style.background = gradient
       avatarCircle.style.backgroundImage = 'none';
       return;
     }
@@ -64,26 +67,27 @@ export function renderProfile(container, navigateTo) {
   });
 
   // ========== 3️⃣ 채팅방 입장 버튼 ==========
-  enterBtn.addEventListener('click', () => {
+  enterBtn.addEventListener('click', async () => {
     const nickname = nicknameInput.value.trim();
     if (!nickname) {
       alert('닉네임을 입력해주세요.');
       return;
     }
 
+    // 닉네임 입력값 sessionStorage에 저장
+    setUsername(nickname);
+
+    // 이미지 있다면 업로드 후 파일 id sessionStorage에 저장
+    // 이미지 없다면 gradient 정보 저장
+    const file = avatarInput.files[0];
+    if (file) {
+      var response = await upload(file);
+      const imgId = response.id;
+      setProfileImageId(imgId);
+    } else {
+      setProfileGradient(gradient);
+    }
     navigateTo('chat', { nickname });
   });
 }
 
-// ========== 🎨 랜덤 그라데이션 함수 ==========
-function getRandomGradient() {
-  const colors = [
-    ['#ff9a9e', '#fad0c4'],
-    ['#a1c4fd', '#c2e9fb'],
-    ['#fbc2eb', '#a6c1ee'],
-    ['#84fab0', '#8fd3f4'],
-    ['#fccb90', '#d57eeb']
-  ];
-  const [start, end] = colors[Math.floor(Math.random() * colors.length)];
-  return `linear-gradient(135deg, ${start}, ${end})`;
-}

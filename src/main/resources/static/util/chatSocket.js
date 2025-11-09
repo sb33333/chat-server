@@ -1,43 +1,64 @@
 "use strict";
-import {getUsername, getProfileImageId} from "./userInfo.js";
+import {getUsername, getProfileImageId} from "../services/userInfo.js";
 
-const WS_URL = 'ws://'+window.location.host+'/chat'; // 운영 시 wss://로 변경
 let socket = null;
 let listeners = [];
+let openListeners = [];
 let reconnectTimeout = 1000; // 재접속 대기(ms)
 let heartbeatInterval = null;
 
 // ========== 이벤트 리스너 관리 ==========
 export function addChatListener(fn) {
   listeners.push(fn);
+  return listeners.filter(f => f !== fn);
 }
 export function removeChatListener(fn) {
   listeners = listeners.filter(f => f !== fn);
 }
 
+function clearListeners() {
+  listeners = [];
+  openListeners = [];
+}
+
+export function addOpenListener(fn) {
+  openListeners.push(fn);
+  return openListeners.filter(f => f !== fn);
+}
+
+export function removeOpenListener(fn) {
+  openListeners.filter(f => f !== fn);
+}
+
+
 // ========== 메시지 전송 ==========
-export function sendMessage(text) {
+export function sendMessage(message) {
   if (!socket || socket.readyState !== WebSocket.OPEN) return;
+  switch (typeof message) {
+    case 'string':
+      socket.send(message);
+      break;
+    case 'object':
+      socket.send(JSON.stringify(message));
+      break;
+    default:
+      console.warn('unsupported message type:', typeof message);
+  }
   // socket.send(JSON.stringify({ type: 'message', text }));
-  socket.send(JSON.stringify({ type: "MESSAGE", text, sender: getUsername(), imgId: getProfileImageId() }));
+  // socket.send(JSON.stringify({ type: "MESSAGE", text, sender: getUsername(), imgId: getProfileImageId() }));
 }
 
 // ========== 연결 관리 ==========
-export async function connectChat(nickname, avatar) {
+export async function connect(wsUrl, connectionQueryString) {
   if (socket && socket.readyState === WebSocket.OPEN) return;
 
-  var isOpened =  false;
-  isOpened = (await fetch("/chat").then(res => res.text()).then(txt => txt.trim())) === "true";
-
-  if (!isOpened) throw new Error("session is not opened.");
-  
-  // if (!profile?.username) throw new Error("username is required.");
-  socket = new WebSocket(WS_URL + "?user="+profile.username);
+  var _url = wsUrl + (connectionQueryString ? `?${connectionQueryString}` : '');
+  socket = new WebSocket(_url);
 
   socket.addEventListener('open', () => {
     console.log('[ChatSocket] connected');
     reconnectTimeout = 1000;
-    socket.send(JSON.stringify({ type: 'JOIN', nickname, avatar }));
+    openListeners.forEach(fn => fn());
 
     heartbeatInterval = setInterval(() => {
       if (socket.readyState === WebSocket.OPEN) {
@@ -63,7 +84,7 @@ export async function connectChat(nickname, avatar) {
     socket = null;
     setTimeout(() => {
       reconnectTimeout = Math.min(30000, reconnectTimeout * 1.5);
-      connectChat(nickname, avatar);
+      connect(wsUrl, connectionQueryString);
     }, reconnectTimeout);
   });
 
@@ -73,10 +94,11 @@ export async function connectChat(nickname, avatar) {
   });
 }
 
-export function disconnectChat() {
+export function disconnect() {
   if (socket) {
     console.log('[ChatSocket] disconnecting');
     clearInterval(heartbeatInterval);
+    clearListeners();
     socket.close();
     socket = null;
   }

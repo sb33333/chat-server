@@ -14,8 +14,10 @@
  */
 
 // views/chat.js
-import { connectChat, disconnectChat, addChatListener, removeChatListener, sendMessage } from '../services/chatSocket.js';
-import { getUsername } from '../services/userInfo.js';
+import { connect, disconnect, addChatListener, removeChatListener, sendMessage } from '../util/chatSocket.js';
+import { getUsername, getProfileGradient, getProfileImageId } from '../services/userInfo.js';
+import * as SimpleChat from '../services/simple-chat.js';
+
 export function renderChat(container, navigateTo) {
   container.innerHTML = `
     <div class="chat-window">
@@ -33,18 +35,17 @@ export function renderChat(container, navigateTo) {
 
   // const nickname = localStorage.getItem('nickname') || '익명';
   const nickname = getUsername() || '익명';
-  const avatar = localStorage.getItem('avatar') || '';
 
   // ===== 메시지 렌더링 =====
   function appendMessage(obj) {
     const el = document.createElement('div');
-    if (obj.type === 'SYSTEM') {
+    if (obj.type === SimpleChat.CHAT_MESSAGE_TYPE.SYSTEM) {
       el.className = 'message other';
       el.textContent = `[시스템] ${obj.text}`;
       messagesDiv.appendChild(el);
       return;
     }
-    if (obj.type === 'MESSAGE') {
+    if (obj.type === SimpleChat.CHAT_MESSAGE_TYPE.MESSAGE) {
       const wrapper = document.createElement('div');
       const isSelf = obj.sender === nickname;
       wrapper.className = isSelf ? 'message self' : 'message other';
@@ -67,16 +68,10 @@ export function renderChat(container, navigateTo) {
       .replaceAll("'", '&#039;');
   }
 
-  // ===== WebSocket 메시지 수신 리스너 등록 =====
-  const listener = (data) => appendMessage(data);
-  removeChatListener(listener);
-  addChatListener(listener);
-  // connectChat(nickname, avatar);
-
   // ===== 전송 버튼 및 Enter 처리 =====
   function handleSend() {
     const text = input.value.trim();
-    if (text) sendMessage(text);
+    if (text) SimpleChat.sendChatMessage(text);
     input.value = '';
   }
   sendBtn.addEventListener('click', handleSend);
@@ -87,9 +82,17 @@ export function renderChat(container, navigateTo) {
   if (header) {
     header.style.cursor = 'pointer';
     header.addEventListener('click', () => {
-      disconnectChat();
-      removeChatListener(listener);
+      SimpleChat.disconnectChatSocket();
       navigateTo('profile');
     });
   }
+
+  // ===== WebSocket 메시지 수신 리스너 등록 =====
+  const listener = (data) => appendMessage(data);
+  removeChatListener(listener);
+  SimpleChat.connectChatSocket(listener).catch(err => {
+    console.error('채팅 서버 연결 실패:', err);
+    alert('채팅 서버에 연결할 수 없습니다. 프로필 설정으로 이동합니다.');
+    navigateTo('profile');
+  });
 }

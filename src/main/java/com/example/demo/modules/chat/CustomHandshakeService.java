@@ -8,10 +8,10 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 public class CustomHandshakeService extends HandshakeWebSocketService {
-
+  private static final String USERNAME_KEY = "username";
   @Override
   public Mono<Void> handleRequest(ServerWebExchange exchange, WebSocketHandler handler) {
-    String user = exchange.getRequest().getQueryParams().getFirst("user");
+    String user = exchange.getRequest().getQueryParams().getFirst(USERNAME_KEY);
     if(user==null||user.isBlank()) {
       exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
       return exchange.getResponse().writeWith(

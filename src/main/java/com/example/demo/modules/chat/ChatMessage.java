@@ -12,5 +12,5 @@ public class ChatMessage {
     private Instant timestamp;
     private String text;
     private String sender;
-    private String imgId;
+    private String profileImg;
 }
