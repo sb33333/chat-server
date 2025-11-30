@@ -11,6 +11,9 @@
  * 새로고침 하면?
  * ws 연결 끊김. -> 서버에서느,ㄴ system으로 전체 메시지 보내기.
  * 로드되면 getUsername, getProfileImgId 사용해서 다시 ws 연결 시도
+ * 
+ * 
+ * 채팅 내용 최근 100개를 session storage 에 저장하고 화면 로드할 때 불러오기
  */
 
 // views/chat.js
